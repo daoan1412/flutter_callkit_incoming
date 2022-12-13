@@ -257,6 +257,8 @@ class CallkitIncomingActivity : Activity() {
         tvDecline = findViewById(R.id.tvDecline)
         animateAcceptCall()
 
+        onAcceptClick()
+
         ivAcceptCall.setOnClickListener {
             onAcceptClick()
         }
