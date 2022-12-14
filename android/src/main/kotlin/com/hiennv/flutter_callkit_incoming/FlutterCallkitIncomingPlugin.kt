@@ -131,6 +131,12 @@ class FlutterCallkitIncomingPlugin : FlutterPlugin, MethodCallHandler, ActivityA
                     data.from = "notification"
                     //send BroadcastReceiver
                     context?.sendBroadcast(
+                        CallkitIncomingBroadcastReceiver.getIntentIncoming(
+                            requireNotNull(context),
+                            data.toBundle()
+                        )
+                    )
+                     context?.sendBroadcast(
                         CallkitIncomingBroadcastReceiver.getIntentAccept(
                             requireNotNull(context),
                             data.toBundle()
