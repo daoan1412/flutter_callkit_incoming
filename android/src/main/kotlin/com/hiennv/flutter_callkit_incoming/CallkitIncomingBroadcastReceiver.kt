@@ -113,25 +113,28 @@ class CallkitIncomingBroadcastReceiver : BroadcastReceiver() {
         when (action) {
             ACTION_CALL_INCOMING -> {
                 try {
-                    if (pm.isInteractive) {
-                        callkitNotificationManager.showIncomingNotification(data)
-                        sendEventFlutter(ACTION_CALL_INCOMING, data)
-                        addCall(context, Data.fromBundle(data))
+                    if (!pm.isInteractive) {
+                        ////// turn on screen
+                        val wakeLock = pm.newWakeLock(
+                            PowerManager.SCREEN_BRIGHT_WAKE_LOCK or PowerManager.FULL_WAKE_LOCK or PowerManager.ACQUIRE_CAUSES_WAKEUP,
+                            "Callkit:PowerManager"
+                        )
+                        wakeLock.acquire(0)
+                        /////
+                    }
+                    val launchIntent =
+                        context.packageManager.getLaunchIntentForPackage("daoan.me.flutter_base_project")
+                    launchIntent?.let {
+                        context.startActivity(it)
+                    }
+                    sendEventFlutter(ACTION_CALL_ACCEPT, data)
+                    addCall(context, Data.fromBundle(data), true)
 //                        if (callkitNotificationManager.incomingChannelEnabled()) {
 //                            val soundPlayerServiceIntent =
 //                                Intent(context, CallkitSoundPlayerService::class.java)
 //                            soundPlayerServiceIntent.putExtras(data)
 //                            context.startService(soundPlayerServiceIntent)
 //                        }
-                    } else {
-                        val launchIntent =
-                            context.packageManager.getLaunchIntentForPackage("daoan.me.flutter_base_project")
-                        launchIntent?.let {
-                            context.startActivity(it)
-                        }
-                        sendEventFlutter(ACTION_CALL_ACCEPT, data)
-                        addCall(context, Data.fromBundle(data), true)
-                    }
                 } catch (error: Exception) {
                     error.printStackTrace()
                 }
